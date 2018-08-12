@@ -12,9 +12,9 @@ let isInit = false;//是否初始化
 export function activate(context: ExtensionContext) {
     const player = new Player({
         playList: [
-            path.resolve(__dirname, '../sounds/typewriter-key-1.mp3'),
-            path.resolve(__dirname, '../sounds/Gymnopedie_No_3.mp3')
-
+            path.resolve(__dirname, '../sounds/Gymnopedie_No_3.mp3'),
+            path.resolve(__dirname, '../sounds/EveningGlow.mp3'),
+            path.resolve(__dirname, '../sounds/Elsee.mp3')
         ]
     });
     globalPlayer = player;
