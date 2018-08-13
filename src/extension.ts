@@ -78,6 +78,7 @@ class MusicController {
         // subscribe to selection change and editor activation events
         let subscriptions: Disposable[] = [];
         workspace.onDidChangeTextDocument(this._onEvent, this, subscriptions);
+        // window.onDidChangeTextEditorSelection(this._onEvent,this,subscriptions);
         // create a combined disposable from both event subscriptions
         this._disposable = Disposable.from(...subscriptions);
     }
