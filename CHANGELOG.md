@@ -3,5 +3,9 @@ All notable changes to the "type-music" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
+## [v0.0.1]
 - Initial release
+
+## [v0.0.2]
+- Add Custom Playlist
+- Support Next Music

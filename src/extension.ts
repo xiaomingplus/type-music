@@ -3,11 +3,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { workspace, commands, window, Disposable, ExtensionContext } from 'vscode';
-import {getDirsFromDir,getDirName,getFilesFromDir} from './util';
+import { getDirsFromDir, getDirName, getFilesFromDir } from './util';
 import Player from './player';
+const cp = require('child_process');
 const path = require('path');
-const fs = require('fs-extra')
-
+const fs = require('fs-extra');
+let spawn = cp.spawn;
 let globalPlayer: any;
 let isInit = false;//是否初始化
 // this method is called when your extension is activated
@@ -21,21 +22,21 @@ export function activate(context: ExtensionContext) {
     for (let index = 0; index < playlists.length; index++) {
         let playlistPath = playlists[index];
         let playlistName = getDirName(playlistPath);
-        if(playlistName === currentPlayListName){
-            currentPlayList = getFilesFromDir(playlistPath,'.mp3');
+        if (playlistName === currentPlayListName) {
+            currentPlayList = getFilesFromDir(playlistPath, '.mp3');
             isPlaylistExist = true;
             break;
-        } 
+        }
     }
-    if(!isPlaylistExist && playlists.length>0){
+    if (!isPlaylistExist && playlists.length > 0) {
         let playlistName = getDirName(playlists[0]);
-        currentPlayList = getFilesFromDir(playlists[0],'.mp3');
+        currentPlayList = getFilesFromDir(playlists[0], '.mp3');
         context.globalState.update('currentPlaylist', playlistName);
         window.showInformationMessage(`There is no setted playlist,will set ${playlistName} as the default playlist. `);
 
-    }  
+    }
     const player = new Player({
-        playlist:currentPlayList
+        playlist: currentPlayList
     });
     globalPlayer = player;
     let status = context.globalState.get('status', 'open');
@@ -65,72 +66,82 @@ export function activate(context: ExtensionContext) {
     });
     let chooseDisposable = commands.registerCommand('extension.choose', () => {
         // The code you place here will be executed every time your command is executed
-        let playlists = getDirsFromDir(path.resolve(__dirname, '../audios')).map((item:string)=>{
+        let playlists = getDirsFromDir(path.resolve(__dirname, '../audios')).map((item: string) => {
             let dirName = getDirName(item);
             currentPlayListName = context.globalState.get('currentPlaylist', 'piano');
-            if(dirName === currentPlayListName){
+            if (dirName === currentPlayListName) {
                 return `${dirName}(current choosed)`;
-            }else{
+            } else {
                 return dirName;
             }
         });
-        if(playlists.length>0){
-            window.showQuickPick(playlists,{
-                canPickMany:false
-            }).then((data:any)=>{
-                if(data){
-                    data = data.replace('(current choosed)','');
-                    //set
-                    context.globalState.update('currentPlaylist', data);
-                    player.setPlaylist({playlist:getFilesFromDir(path.resolve(__dirname, '../audios',data),'.mp3')});
+        if (playlists.length > 0) {
+            window.showQuickPick(playlists, {
+                canPickMany: false
+            }).then((data: any) => {
+                if (data) {
+                    data = data.replace('(current choosed)', '');
+                    let playlistArr = getFilesFromDir(path.resolve(__dirname, '../audios', data), '.mp3');
+                    if (playlistArr.length > 0) {
+                        //set
+                        context.globalState.update('currentPlaylist', data);
+                        player.setPlaylist({ playlist: playlistArr });
+                    } else {
+                        window.showErrorMessage('There are no any mp3 files in this playlist,please copy some .mp3 files to here.');
+                        setTimeout(() => {
+                            openFinder(path.resolve(__dirname, '../audios',data));
+                        }, 1000);
+
+                    }
+
                 }
-                
+
             });
 
-        }else{
+        } else {
             window.showErrorMessage('There are not any playlists in your local,please created first.');
             return;
         }
-        
+
 
 
     });
     let nextDisposable = commands.registerCommand('extension.next', () => {
         player.next();
         window.showInformationMessage('Have switched the next music.');
+    });
 
+    let openDisposable = commands.registerCommand('extension.open', () => {
+        openFinder(path.resolve(__dirname, '../audios'));
     });
     let addDisposable = commands.registerCommand('extension.add', () => {
         window.showOpenDialog({
-            canSelectMany:true,
-            filters:{
+            canSelectMany: true,
+            filters: {
                 'Musics': ['mp3']
             }
-        }).then((data:any)=>{
-            console.log('data',data);
-            if(data && Array.isArray(data)){
-                let promises = data.map((item:any) => {
-                    console.log('item.path',item.path);
-                    
-                    return fs.copy(item.path,path.resolve(__dirname, '../audios/liked',path.basename(item.path)));
+        }).then((data: any) => {
+            if (data && Array.isArray(data)) {
+                let promises = data.map((item: any) => {
+                    return fs.copy(item.path, path.resolve(__dirname, '../audios/liked', path.basename(item.path)));
                 });
-                Promise.all(promises).then(()=>{
+                Promise.all(promises).then(() => {
                     window.showInformationMessage(`Succedd Added Music to ${currentPlayListName}`);
-                }).catch((e:any)=>{
-                    console.error('error',e);
+                }).catch((e: any) => {
+                    console.error('error', e);
                     window.showErrorMessage('Some error occured.');
 
                 });
             }
-            
-        })
+
+        });
 
     });
     context.subscriptions.push(disposable);
     context.subscriptions.push(chooseDisposable);
     context.subscriptions.push(nextDisposable);
     context.subscriptions.push(addDisposable);
-
+    context.subscriptions.push(openDisposable);
     if (status === 'open') {
         // create a new word counter
         let music = new Music(player);
@@ -163,7 +174,7 @@ class MusicController {
         // subscribe to selection change and editor activation events
         let subscriptions: Disposable[] = [];
         workspace.onDidChangeTextDocument(this._onEvent, this, subscriptions);
-        window.onDidChangeTextEditorSelection(this._onEvent,this,subscriptions);
+        window.onDidChangeTextEditorSelection(this._onEvent, this, subscriptions);
         // create a combined disposable from both event subscriptions
         this._disposable = Disposable.from(...subscriptions);
     }
@@ -183,7 +194,7 @@ class MusicController {
     }
 }
 
-enum MusicState {Init, Playing, Pause  }
+enum MusicState { Init, Playing, Pause }
 class Music {
     private _lastTypingTime: number = 0;
     private _timer: NodeJS.Timer | undefined;
@@ -192,7 +203,7 @@ class Music {
     private player: any;
     constructor(player: any) {
         this.player = player;
-        this.player.on('stop',()=>{
+        this.player.on('stop', () => {
             this._musicState = MusicState.Init;
         });
     }
@@ -236,7 +247,7 @@ class Music {
     }
     public pause() {
         //停止播放
-        if(this._musicState === MusicState.Playing){
+        if (this._musicState === MusicState.Playing) {
             this._musicState = MusicState.Pause;
             if (this.player) {
                 this.player.pause();
@@ -270,4 +281,10 @@ class Music {
     }
     dispose() {
     }
+}
+
+function openFinder(dirPath:string){
+    spawn('open', [
+        dirPath
+    ]);
 }

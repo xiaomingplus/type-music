@@ -2,7 +2,7 @@
     "name": "type-music",
     "displayName": "Type Music",
     "description": "typing with music",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "xiaomingplus",
     "icon": "icon.png",
     "engines": {
@@ -39,7 +39,7 @@
             },
             {
                 "command": "extension.open",
-                "title":"Open Typing Music Playlist Folers"
+                "title": "Open Typing Music Playlist Folers"
             }
         ]
     },

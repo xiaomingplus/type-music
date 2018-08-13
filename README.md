@@ -25,7 +25,7 @@ Type command ```Toggle Typing Music```
 - ```Next Music Of Current Typeing Music Playlist```,will play next music at your current playlist.
 - ```Add Music You Liked To Typing Music``` will open the music directors that stored your personal liked,you can drop some music you liked to here.
 - ```Choose Playlist``` will show the list of your local
-- ```Open Typing Music Playlist Folers```,will open the playlist in your finder
+- ```Open Typing Music Playlist Folers```,will open the playlist in your finder,every subfolds will be a playlist,the subfolds expect some ```.mp3```files.
 
 ## Requirements
 
@@ -41,6 +41,8 @@ Initial release of mac.
 
 ### 0.0.2
 
+- Add Custom Playlist
+- Support Next Music
 -----------------------------------------------------------------------------------------------------------
 
 ## Thanks
