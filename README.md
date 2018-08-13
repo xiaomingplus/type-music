@@ -21,8 +21,6 @@ Type command ```Toggle Typing Music```
 
 ## Commands
 
-## Toggle open or close typing background music
-
 - ```Toggle Typing Music``` will open or close typing background music.default the typing music is opened.
 - ```Next Music Of Current Typeing Music Playlist```,will play next music at your current playlist.
 - ```Add Music You Liked To Typing Music``` will open the music directors that stored your personal liked,you can drop some music you liked to here.
