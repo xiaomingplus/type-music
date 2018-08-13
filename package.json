@@ -4,7 +4,7 @@
     "description": "typing with music",
     "version": "0.0.1",
     "publisher": "xiaomingplus",
-    "icon":"icon.png",
+    "icon": "icon.png",
     "engines": {
         "vscode": "^1.25.0"
     },
@@ -24,6 +24,22 @@
             {
                 "command": "extension.toggle",
                 "title": "Toggle Typing Music"
+            },
+            {
+                "command": "extension.choose",
+                "title": "Choose Typing Music Playlist"
+            },
+            {
+                "command": "extension.next",
+                "title": "Next Music Of Current Typeing Music Playlist"
+            },
+            {
+                "command": "extension.add",
+                "title": "Add Music You Liked To Typing Music"
+            },
+            {
+                "command": "extension.open",
+                "title":"Open Typing Music Playlist Folers"
             }
         ]
     },
@@ -42,6 +58,8 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "find-exec": "^1.0.0"
+        "find-exec": "^1.0.0",
+        "fs-extra": "^7.0.0",
+        "node-dir": "^0.1.17"
     }
 }

@@ -3,22 +3,41 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { workspace, commands, window, Disposable, ExtensionContext } from 'vscode';
+import {getDirsFromDir,getDirName,getFilesFromDir} from './util';
 import Player from './player';
 const path = require('path');
+const fs = require('fs-extra')
+
 let globalPlayer: any;
 let isInit = false;//是否初始化
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
+    console.log('extension "Type-Music" is now active!');
+    let playlists = getDirsFromDir(path.resolve(__dirname, '../audios'));
+    let currentPlayListName = context.globalState.get('currentPlaylist', 'piano');
+    let currentPlayList: string[] = [];
+    let isPlaylistExist = false;
+    for (let index = 0; index < playlists.length; index++) {
+        let playlistPath = playlists[index];
+        let playlistName = getDirName(playlistPath);
+        if(playlistName === currentPlayListName){
+            currentPlayList = getFilesFromDir(playlistPath,'.mp3');
+            isPlaylistExist = true;
+            break;
+        } 
+    }
+    if(!isPlaylistExist && playlists.length>0){
+        let playlistName = getDirName(playlists[0]);
+        currentPlayList = getFilesFromDir(playlists[0],'.mp3');
+        context.globalState.update('currentPlaylist', playlistName);
+        window.showInformationMessage(`There is no setted playlist,will set ${playlistName} as the default playlist. `);
+
+    }  
     const player = new Player({
-        playList: [
-            path.resolve(__dirname, '../sounds/Gymnopedie_No_3.mp3'),
-            path.resolve(__dirname, '../sounds/EveningGlow.mp3'),
-            path.resolve(__dirname, '../sounds/Elsee.mp3')
-        ]
+        playlist:currentPlayList
     });
     globalPlayer = player;
-    console.log('Congratulations, your extension "Type-Music" is now active!');
     let status = context.globalState.get('status', 'open');
     let disposable = commands.registerCommand('extension.toggle', () => {
         // The code you place here will be executed every time your command is executed
@@ -44,7 +63,73 @@ export function activate(context: ExtensionContext) {
         }
 
     });
+    let chooseDisposable = commands.registerCommand('extension.choose', () => {
+        // The code you place here will be executed every time your command is executed
+        let playlists = getDirsFromDir(path.resolve(__dirname, '../audios')).map((item:string)=>{
+            let dirName = getDirName(item);
+            currentPlayListName = context.globalState.get('currentPlaylist', 'piano');
+            if(dirName === currentPlayListName){
+                return `${dirName}(current choosed)`;
+            }else{
+                return dirName;
+            }
+        });
+        if(playlists.length>0){
+            window.showQuickPick(playlists,{
+                canPickMany:false
+            }).then((data:any)=>{
+                if(data){
+                    data = data.replace('(current choosed)','');
+                    //set
+                    context.globalState.update('currentPlaylist', data);
+                    player.setPlaylist({playlist:getFilesFromDir(path.resolve(__dirname, '../audios',data),'.mp3')});
+                }
+                
+            });
+
+        }else{
+            window.showErrorMessage('There are not any playlists in your local,please created first.');
+            return;
+        }
+        
+
+
+    });
+    let nextDisposable = commands.registerCommand('extension.next', () => {
+        player.next();
+        window.showInformationMessage('Have switched the next music.');
+
+    });
+    let addDisposable = commands.registerCommand('extension.add', () => {
+        window.showOpenDialog({
+            canSelectMany:true,
+            filters:{
+                'Musics': ['mp3']
+            }
+        }).then((data:any)=>{
+            console.log('data',data);
+            if(data && Array.isArray(data)){
+                let promises = data.map((item:any) => {
+                    console.log('item.path',item.path);
+                    
+                    return fs.copy(item.path,path.resolve(__dirname, '../audios/liked',path.basename(item.path)));
+                });
+                Promise.all(promises).then(()=>{
+                    window.showInformationMessage(`Succedd Added Music to ${currentPlayListName}`);
+                }).catch((e:any)=>{
+                    console.error('error',e);
+                    window.showErrorMessage('Some error occured.');
+
+                });
+            }
+            
+        })
+
+    });
     context.subscriptions.push(disposable);
+    context.subscriptions.push(chooseDisposable);
+    context.subscriptions.push(nextDisposable);
+    context.subscriptions.push(addDisposable);
 
     if (status === 'open') {
         // create a new word counter
@@ -78,7 +163,7 @@ class MusicController {
         // subscribe to selection change and editor activation events
         let subscriptions: Disposable[] = [];
         workspace.onDidChangeTextDocument(this._onEvent, this, subscriptions);
-        // window.onDidChangeTextEditorSelection(this._onEvent,this,subscriptions);
+        window.onDidChangeTextEditorSelection(this._onEvent,this,subscriptions);
         // create a combined disposable from both event subscriptions
         this._disposable = Disposable.from(...subscriptions);
     }
@@ -134,9 +219,9 @@ class Music {
                 this.pause();
                 this._stopTimer = setTimeout(() => {
                     //在打字
-                    //30s没有工作就stop，避免影响别的音乐程序
+                    //60s没有工作就stop，避免影响别的音乐程序
                     this.stop();
-                }, 30 * 1000);
+                }, 60 * 1000);
             }
         }, 3000);
         //是否正在播放
