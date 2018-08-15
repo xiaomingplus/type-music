@@ -22,8 +22,8 @@ class Play {
 	constructor(opts?: any) {
 		opts = Object.assign(
 			{
-                playlist: [],
-                playIndex:0,//默认播放的曲目
+				playlist: [],
+				playIndex: 0, //默认播放的曲目
 				repeat: 'all', //all,one,off
 				random: false //是否开启随机
 			},
@@ -38,8 +38,8 @@ class Play {
 		if (!this.player) {
 			throw new Error("Couldn't find a suitable audio player");
 		}
-        this.playlist = opts.playlist;
-        this.playIndex = opts.playIndex;
+		this.playlist = opts.playlist;
+		this.playIndex = opts.playIndex;
 		this.random = opts.random;
 		this.repeat = opts.repeat;
 	}
@@ -53,9 +53,9 @@ class Play {
 		if (!(opts.playlist.length > 0)) {
 			throw new Error('No audio file specified');
 		}
-        this.playlist = opts.playlist;
-        this.playIndex = 0;
-        this.stop();
+		this.playlist = opts.playlist;
+		this.playIndex = 0;
+		this.stop();
 	}
 	on(event: string, callback: () => void): number {
 		let eventId = getEventId();
@@ -123,14 +123,14 @@ class Play {
 					return;
 				} else {
 					this.emit('stop');
-                }
-                this.process = null;
+				}
+				this.process = null;
 			});
 
 			this.process.on('error', (err: any) => {
-                this.emit('stop');
-                this.process = null;
-                throw new Error('Unable to spawn process with ' + this.player);
+				this.emit('stop');
+				this.process = null;
+				throw new Error('Unable to spawn process with ' + this.player);
 			});
 		} else {
 			throw new Error('No audio file specified');
@@ -159,9 +159,10 @@ class Play {
 				}
 			}
 		}
+		this.play(); //这里继续play
 	}
 	public next() {
-        this.stop();
+		this.stop();
 		if (this.playlist[this.playIndex + 1]) {
 			this.playIndex = this.playIndex + 1;
 		} else {
@@ -183,9 +184,9 @@ class Play {
 	resume() {
 		if (this.process) {
 			this.process.kill('SIGCONT');
-		}else{
-            this.play();
-        }
+		} else {
+			this.play();
+		}
 	}
 	pause() {
 		if (this.process) {
