@@ -45,6 +45,11 @@ Initial release of mac.
 
 - Add Custom Playlist
 - Support Next Music
+
+### 0.0.3
+
+- fix next music bug
+
 -----------------------------------------------------------------------------------------------------------
 
 ## Thanks

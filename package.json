@@ -2,7 +2,7 @@
     "name": "type-music",
     "displayName": "Type Music",
     "description": "typing with music",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "xiaomingplus",
     "icon": "icon.png",
     "engines": {
