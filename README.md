@@ -2,7 +2,7 @@
 
 When you are typing, there will be ring out a beautiful background music.
 
-[点击查看中文文档](https://github.com/xiaomingplus/type-music/blob/feature/theme-support/README-CN.md)
+[点击查看中文文档](https://github.com/xiaomingplus/type-music/blob/master/README-CN.md)
 
 ## Features
 
