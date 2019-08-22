@@ -1,37 +1,43 @@
 # Type Music
 
-When you are typing, there will be ring out a beautiful background music.
+As code streams down from under your cursor, so does the beautiful background music~
+
+Notes will automatically sprang out as you type and quiet down when you pause.
+
+Pick a playlist of your favorite tracks!
 
 [点击查看中文文档](https://github.com/xiaomingplus/type-music/blob/master/README-CN.md)
 
 ## Features
 
-- Typing with beautiful music
-- Custom your own music playlist
+- Type with beautiful music.
+- Customize a playlist. Pick and play your favorites!
 
 ## Note
 
-Now,only supported macos.Windows will be coming soon.
+Now supported only on Mac OS. Support for Windows is coming soon!
 
-## How to use
+Currently supporting only ```.MP3``` files.
 
-Just search "Type Music",install and typing~
+## How to Use
 
-## How to Close
+Just search "Type Music", click install and enjoy every click on your keys~
+
+## How to Toggle
 
 Type command ```Toggle Typing Music```
 
 ## Commands
 
-- ```Toggle Typing Music``` will open or close typing background music.default the typing music is opened.
-- ```Next Music Of Current Typeing Music Playlist```,will play next music at your current playlist.
-- ```Add Music You Liked To Typing Music``` will open the music directors that stored your personal liked,you can drop some music you liked to here.
-- ```Choose Playlist``` will show the list of your local,you can choose one.
-- ```Open Typing Music Playlist Folers```,will open the playlist in your finder,every subfolds will be a playlist,the subfolds expect some ```.mp3```files.
+- ```Toggle Typing Music``` will turn on or off the typing background music. By default the music is on.
+- ```Next Music Of Current Typeing Music Playlist``` will play the next track in your current playlist.
+- ```Add Music You Liked To Typing Music``` will open the directory that stores your personal favorites. You can add music to your favorites by draging-and-dropping any track you like into this directory.
+- ```Choose Playlist``` will display a list of your local playlists from which you can pick one.
+- ```Open Typing Music Playlist Folers``` will open the directory containing all playlists in your finder. Each subdirectory is a playlist. Only ```.MP3``` files in the subfolders can be played.
 
 ## Requirements
 
-Macos.
+Mac OS.
 
 ## Known Issues
 
@@ -39,20 +45,20 @@ Macos.
 
 ### 0.0.1
 
-Initial release of mac.
+- Initial release for Mac OS
 
 ### 0.0.2
 
-- Add Custom Playlist
-- Support Next Music
+- Allow creation of custom playlists
+- Support next music
 
 ### 0.0.3
 
-- fix next music bug
+- Fix next music bug
 
 -----------------------------------------------------------------------------------------------------------
 
-## Thanks
+## Special thanks
 
 Inspired by <https://www.typeboost.io>
 
